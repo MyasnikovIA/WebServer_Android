@@ -35,6 +35,7 @@ import java.util.Set;
 import ru.miacomsoft.signalserver.Lib.webserver.HttpSrv;
 import ru.miacomsoft.signalserver.Terminal.terminal;
 import ru.miacomsoft.signalserver.Www.Index;
+import ru.miacomsoft.signalserver.Www.SignalChange;
 import ru.miacomsoft.signalserver.Www.TestPage;
 
 
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         web.onTerminal(terminal::onTerminal);
         web.onPage("testpage", TestPage::onPage);
         web.onPage("index.html", Index::onPage);
+        web.onPage("signalchange.ru", SignalChange::onPage);
         web.onPage(Index::onPage);
         web.start();
     }

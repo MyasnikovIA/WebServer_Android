@@ -18,11 +18,6 @@ import java.util.Set;
 
 import ru.miacomsoft.signalserver.Lib.webserver.HttpSrv;
 
-/**
- *  Класс реализует обмен JSON сообщениями между клиентами, которые подключены через Socket
- *
- *
- */
 public class terminal {
 
 

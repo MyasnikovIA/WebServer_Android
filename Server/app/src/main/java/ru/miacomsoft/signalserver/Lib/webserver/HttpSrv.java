@@ -305,7 +305,7 @@ public class HttpSrv {
             while ((charInt = query.inputStreamReader.read()) > 0) {
                 if (query.socket.isConnected() == false) return false;
                 sbTmp.append((char) charInt);
-                if ((sbTmp.toString().indexOf("\r") != -1) || (charInt == 0)) {
+                if ((sbTmp.toString().indexOf("\r") != -1) || (sbTmp.toString().indexOf("\n") != -1) || (charInt == 0)) {
                     numLin++;
                     // если в первой строке невстречается слово GET или POST, тогда отключаем соединение
                     if ((numLin == 1) && (sb.toString().split("\r").length == 1)) {
@@ -315,7 +315,7 @@ public class HttpSrv {
                             if (res == -1) {
                                 // обработка терминального запроса
                                 StringBuffer sbSub2 = new StringBuffer();
-                                int countEnter=0;
+                                int countEnter = 0;
                                 int subcharInt = 0;
                                 int subcharIntLast = 0;
                                 while (query.socket.isConnected()) {
@@ -328,12 +328,12 @@ public class HttpSrv {
                                                 || ((subcharInt == 13) && (subcharIntLast == 10))
                                                 || ((subcharInt == 10) && (subcharIntLast == 13))
                                         ) {
-                                            countEnter+=1;
-                                            if (countEnter==2) {
+                                            countEnter += 1;
+                                            if (countEnter == 2) {
                                                 break; // чтение окончено
                                             }
-                                        }else{
-                                            countEnter=0;
+                                        } else {
+                                            countEnter = 0;
                                         }
                                         sbSub2.append((char) subcharInt);
                                         query.byteArrayOutputStream.write(subcharInt);
@@ -358,8 +358,16 @@ public class HttpSrv {
                     sbTmp.setLength(0);
                 }
                 sb.append((char) charInt);
-
+                if (sb.toString().length() > 4) { // не удачная конструкция, надо подумать о корректировки механизма поиска окончания запроса
+                    if ((sb.toString().indexOf("\r\n\r\n") != -1)
+                            || (sb.toString().indexOf("\r\r") != -1)
+                            || (sb.toString().indexOf("\n\n") != -1)
+                    ) {
+                        break; // чтение заголовка окончено
+                    }
+                }
             }
+            query.TypeQuery = "GET";
             if (sb.toString().indexOf("Content-Length: ") != -1) {
                 String sbTmp2 = sb.toString().substring(sb.toString().indexOf("Content-Length: ") + "Content-Length: ".length(), sb.toString().length());
                 String lengPostStr = sbTmp2.substring(0, sbTmp2.indexOf("\n")).replace("\r", "");
@@ -380,6 +388,7 @@ public class HttpSrv {
                 // POST = buffer.toByteArray();
                 query.request.put("PostBodyText", new JSONObject(new String(buffer.toByteArray())));
                 query.POST = buffer.toByteArray();
+                query.TypeQuery = "POST";
             }
             int indLine = 0;
             String getCmd = "";
@@ -832,6 +841,7 @@ public class HttpSrv {
         public String contentZapros = "";
         public String message = "";
         public String firstMessage = "";
+        public String TypeQuery = "";
         public BufferedReader bufferedReader;
         public StringBuffer stringBuffer;
         public InputStreamReader inputStreamReader;
@@ -861,7 +871,7 @@ public class HttpSrv {
             this.contentZapros = "";
             this.session = session;
             this.stringBuffer = new StringBuffer();
-            this.byteArrayOutputStream =  new ByteArrayOutputStream();
+            this.byteArrayOutputStream = new ByteArrayOutputStream();
         }
 
         public HttpResponse(Socket socket, HashMap<String, Object> session, AppCompatActivity mainActivity) throws IOException, JSONException {
@@ -880,7 +890,7 @@ public class HttpSrv {
             this.session = session;
             this.stringBuffer = new StringBuffer();
             this.mainActivity = mainActivity;
-            this.byteArrayOutputStream =  new ByteArrayOutputStream();
+            this.byteArrayOutputStream = new ByteArrayOutputStream();
         }
 
         /**

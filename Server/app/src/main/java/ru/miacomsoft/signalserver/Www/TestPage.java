@@ -17,9 +17,16 @@ public class TestPage {
         sb.append(timeStamp);
         sb.append("</center></h1>");
         sb.append("<script>");
+        // sb.append("let timerId = setTimeout(function tick(){");
+        // sb.append("   location.reload();");
+        // sb.append("   timerId = setTimeout(tick, 1000);");
+        // sb.append("}, 1000); ");
         sb.append( "</script>");
         sb.append("</body>");
         Head.sendHtml(sb.toString());
+        // Head.HeadSend("text/html");
+        // Head.BodySend(sb.toString());
+        // Head.EndSend();
     }
 
 
