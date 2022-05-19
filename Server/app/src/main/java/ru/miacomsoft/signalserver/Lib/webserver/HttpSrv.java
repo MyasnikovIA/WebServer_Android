@@ -148,7 +148,7 @@ public class HttpSrv {
         mainThready = new Thread(new Runnable() {
             public void run() {
                 try {
-                    ServerSocket ss = new ServerSocket(port);
+                    ServerSocket ss = new ServerSocket(port, 32000); // 32000 - максимальное количество конектов к серверу
                     while (process == true) {
                         Socket socket = ss.accept();
                         new Thread(new SocketProcessor(socket, mainActivity)).start();
