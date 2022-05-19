@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         WifiConfiguration wifiConfig = new WifiConfiguration();
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
         wifiConfig.SSID = String.format("\"%s\"", "ELTEX-87A2"); // Имя WIFI точки доступа
-        wifiConfig.preSharedKey = String.format("\"%s\"", "XXXXXXXX"); // Пароль для полдключения к точки доступа
+        wifiConfig.preSharedKey = String.format("\"%s\"", "*************"); // Пароль для полдключения к точки доступа
         while (onConnect == false) {
             WifiInfo info = wifiManager.getConnectionInfo();
             int ip = info.getIpAddress();
