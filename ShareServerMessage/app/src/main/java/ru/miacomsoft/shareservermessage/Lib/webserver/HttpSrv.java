@@ -1012,6 +1012,33 @@ public class HttpSrv {
         }
 
         /**
+         * Отправка текста как HTML страницу (Устарело)
+         *
+         * @param Head
+         * @param content
+         */
+        public void sendText(HttpResponse Head, String content) throws IOException {
+            OutputStream os = Head.os;
+            DataOutputStream dataOutputStream = Head.dataOutputStream;
+            dataOutputStream.write("HTTP/1.1 200 OK\r\n".getBytes());
+            // дата создания в GMT
+            // DateFormat df = DateFormat.getTimeInstance();
+            // df.setTimeZone(TimeZone.getTimeZone("GMT"));
+            // Длина файла
+            dataOutputStream.write(("Content-Length: " + content.length() + "\r\n").getBytes());
+            dataOutputStream.write(("Content-Type: text/plain; charset=utf-8\r\n").getBytes());
+            // Остальные заголовки
+            dataOutputStream.write("Access-Control-Allow-Origin: *\r\n".getBytes());
+            dataOutputStream.write("Access-Control-Allow-Credentials: true\r\n".getBytes());
+            dataOutputStream.write("Access-Control-Expose-Headers: FooBar\r\n".getBytes());
+            dataOutputStream.write("Connection: close\r\n".getBytes());
+            dataOutputStream.write("Server: HTMLserver\r\n\r\n".getBytes());
+            dataOutputStream.write(content.getBytes(Charset.forName("UTF-8")));
+            dataOutputStream.write(0);
+            dataOutputStream.flush();
+        }
+
+        /**
          * Отправка бинарного файла клиенту (для браузера)
          *
          * @param Head

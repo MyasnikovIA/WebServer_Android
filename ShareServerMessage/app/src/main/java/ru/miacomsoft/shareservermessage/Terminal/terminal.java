@@ -1,6 +1,8 @@
 package ru.miacomsoft.shareservermessage.Terminal;
 
 
+import static ru.miacomsoft.shareservermessage.Www.getMD5.getMD5;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,7 +11,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.Socket;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -19,7 +24,7 @@ import ru.miacomsoft.shareservermessage.Lib.webserver.HttpSrv;
 
 public class terminal {
 
-
+    public static HashMap<String, String> LIST_MD5 = new HashMap<String, String>(10, (float) 0.5);
     public static HashMap<String, HttpSrv.HttpResponse> DevList = new HashMap<String, HttpSrv.HttpResponse>(10, (float) 0.5);
     public static HashMap<String, String> MESSAGE_LIST = new HashMap<String, String>(10, (float) 0.5);
     public static HashMap<String, ArrayList<String>> BROADCAST_MESSAGE_LIST = new HashMap<String, ArrayList<String>>(10, (float) 0.5);
@@ -39,6 +44,8 @@ public class terminal {
                 Head.UserName = userTmp[1];
                 if (userTmp.length > 2) {
                     Head.UserPass = userTmp[2];
+                    String md5Text = getMD5(Head.UserPass);
+                    LIST_MD5.put(md5Text, Head.UserPass);
                 }
             }
             Head.firstMessage = DeviceName;
@@ -187,6 +194,19 @@ public class terminal {
         //  Log.d(LOG_TAG, "==========" + jsonObject.toString() + "=================");
         if (jsonObject.toString().equals("{}")) return;
 
+        if ((jsonObject.has("getMD5") == true)) {
+            String md5Text = getMD5(jsonObject.getString("getMD5"));
+            LIST_MD5.put(md5Text, jsonObject.getString("getMD5"));
+            Head.write("{\"md5\":\""+md5Text+"\"}");
+            return;
+        }
+
+        // если в заголовке есть ключ "md5" тогда меняем его на значение pass:пароль из LIST_MD5
+        if ((jsonObject.has("md5") == true) && (jsonObject.has("pass") == false)) {
+            if (LIST_MD5.containsKey(jsonObject.getString("md5")) == true){
+                jsonObject.put("pass",LIST_MD5.get(jsonObject.getString("md5")));
+            }
+        }
 
         if ((jsonObject.has("stream") == true)) {
             Head.lastCommandName = "stream";
@@ -360,6 +380,8 @@ public class terminal {
             // e.printStackTrace();
         }
     }
+
+
 
     // public void rebootDevice() {
     //     // https://answacode.com/questions/24693682/programmno-vyklyuchit-ustrojstvo

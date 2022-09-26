@@ -1,5 +1,6 @@
 package ru.miacomsoft.shareservermessage.Www;
 
+import static ru.miacomsoft.shareservermessage.Terminal.terminal.LIST_MD5;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +43,13 @@ public class SignalChange {
 
         if (jsonObject.has("from") == false) {
             jsonObject.put("from", "anonimus");
+        }
+
+        // если в заголовке есть ключ "md5" тогда меняем его на значение pass:пароль из LIST_MD5
+        if ((jsonObject.has("md5") == true) && (jsonObject.has("pass") == false)) {
+            if (LIST_MD5.containsKey(jsonObject.getString("md5")) == true){
+                jsonObject.put("pass",LIST_MD5.get(jsonObject.getString("md5")));
+            }
         }
 
         // прямая отправка сообщения для устройства, если оно в сети

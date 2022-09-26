@@ -1,5 +1,7 @@
 package ru.miacomsoft.shareservermessage;
 
+import static ru.miacomsoft.shareservermessage.Terminal.terminal.LIST_MD5;
+
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,6 +24,7 @@ import ru.miacomsoft.shareservermessage.Terminal.terminal;
 import ru.miacomsoft.shareservermessage.Www.Index;
 import ru.miacomsoft.shareservermessage.Www.SignalChange;
 import ru.miacomsoft.shareservermessage.Www.TestPage;
+import ru.miacomsoft.shareservermessage.Www.getMD5;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_main);
-
         PowerManager pm2 = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm2.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "SignalServer::MainActivity");
         mWakeLock.acquire();
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
         web.onPage("testpage", TestPage::onPage);
         web.onPage("index.html", Index::onPage);
         web.onPage("signalchange.ru", SignalChange::onPage);
+        web.onPage("md5", getMD5::onPage);
         web.onPage(Index::onPage);
         web.start();
     }
