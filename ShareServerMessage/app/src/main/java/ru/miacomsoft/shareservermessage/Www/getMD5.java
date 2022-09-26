@@ -26,7 +26,6 @@ public class getMD5 {
                 e.printStackTrace();
             }
         }
-        Log.d("getMD5",Head.requestParam.toString());
 
         if (Head.requestParam.has("getmd5") == true) {
             String md5Text = getMD5(Head.requestParam.getString("getmd5"));
